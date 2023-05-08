@@ -2,9 +2,10 @@
 """Create root using registered blueprint"""
 
 from api.v1.views import app_views
-import jsonify
+import json
 
 @app_views.route('/status')
 def status():
-    """Return json of staus"""
-    return jsonify({"status": "OK"})
+    """Return json of status"""
+    stat_json = json.dumps({"status": "OK"})
+    return stat_json
