@@ -82,6 +82,9 @@ class TestFileStorage(unittest.TestCase):
     def test_new(self):
         """test that new adds an object to the FileStorage.__objects attr"""
         storage = FileStorage()
+        """assign the data in FileStorage._FileStorage__objects to a
+        variable (save), to stored the initial values before the test, so
+        they won't be altered."""
         save = FileStorage._FileStorage__objects
         FileStorage._FileStorage__objects = {}
         test_dict = {}
@@ -92,6 +95,9 @@ class TestFileStorage(unittest.TestCase):
                 storage.new(instance)
                 test_dict[instance_key] = instance
                 self.assertEqual(test_dict, storage._FileStorage__objects)
+        """then assign FileStorage._FileStorage__objects to the variable after
+        the test processes are done to obtain the initial values
+        before the test."""
         FileStorage._FileStorage__objects = save
 
     @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
@@ -103,9 +109,15 @@ class TestFileStorage(unittest.TestCase):
             instance = value()
             instance_key = instance.__class__.__name__ + "." + instance.id
             new_dict[instance_key] = instance
+        """assign the data in FileStorage._FileStorage__objects to a
+        variable (save), to stored the initial values before the test, so
+        they won't be altered."""
         save = FileStorage._FileStorage__objects
         FileStorage._FileStorage__objects = new_dict
         storage.save()
+        """then assign FileStorage._FileStorage__objects to the variable after
+        the test processes are done to obtain the initial values
+        before the test."""
         FileStorage._FileStorage__objects = save
         for key, value in new_dict.items():
             new_dict[key] = value.to_dict()
@@ -113,3 +125,59 @@ class TestFileStorage(unittest.TestCase):
         with open("file.json", "r") as f:
             js = f.read()
         self.assertEqual(json.loads(string), json.loads(js))
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    def test_get(self):
+        """Test that get properly fetch the data"""
+        storage = FileStorage()
+        """assign the data in FileStorage._FileStorage__objects to a
+        variable (save), to stored the initial values before the test, so
+        they won't be altered."""
+        save = FileStorage._FileStorage__objects
+        FileStorage._FileStorage__objects = {}
+
+        for key, value in classes.items():
+            with self.subTest(key=key, value=value):
+                inst = value()
+                inst_key = inst.__class__.__name__ + "." + inst.id
+                """Store the data in FileStorage._FileStorage__objects"""
+                storage.new(inst)
+                test_obj = FileStorage._FileStorage__objects[inst_key]
+                main_obj = storage.get(value, inst.id)
+                self.assertEqual(test_obj, main_obj)
+
+        self.assertEqual(storage.get(), None)
+        """then assign FileStorage._FileStorage__objects to the variable after
+        the test processes are done to obtain the initial values
+        before the test."""
+        FileStorage._FileStorage__objects = save
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    def test_count(self):
+        """Test that count properly count the data"""
+        storage = FileStorage()
+        """assign the data in FileStorage._FileStorage__objects to a
+        variable (save), to stored the initial values before the test, so
+        they won't be altered."""
+        save = FileStorage.__FileStorage__objects
+        FileStorage._FileStorage__objects = {}
+        """Generate data"""
+        for value in classes.values():
+            instance = value()
+            storage.new(instance)
+
+        """Test if not cls was passed """
+        no_cls = len(storage.all())
+        test_no_cls = storage.count()
+        self.assertEqual(no_cls, test_no_cls)
+
+        """Test when cls is present"""
+        for value in classes.values():
+            with self.subTest(value=value):
+                cls_cnt = len(storage.all(value))
+                test_cls = storage.count(value)
+                self.assertEqual(cls_cnt, test_cls)
+        """then assign FileStorage._FileStorage__objects to the variable after
+        the test processes are done to obtain the initial values
+        before the test."""
+        FileStorage._FileStorage__objects = save
