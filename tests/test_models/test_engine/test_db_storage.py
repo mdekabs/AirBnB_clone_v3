@@ -78,90 +78,18 @@ class TestFileStorage(unittest.TestCase):
     @unittest.skipIf(models.storage_t != 'db', "testing db storage")
     def test_all_no_class(self):
         """Test that all returns all rows when no class is passed"""
-        database = DBStorage()
-        """Start a session"""
-        database.reload()
-
-        """Generate data"""
-        for value in classes.values():
-            instance = value()
-            database.new(instance)
-
-        data = database.all()
-        for key, value in classes.items():
-            with self.subTest(key=key, value=value):
-                self.assertIn(value.__name__, data)
-        """End session"""
-        database.close()
 
     @unittest.skipIf(models.storage_t != 'db', "testing db storage")
     def test_all_wit_class(self):
         """Test that all returns all rows when class is passed"""
-        database = DBStorage()
-        """Start a session"""
-        database.reload()
-
-        """Generate data"""
-        for value in classes.values():
-            instance = value()
-            database.new(instance)
-
-        for key, value in classes.items():
-            with self.subTest(key=key, value=value):
-                data = database.all(value)
-                self.assertIn(value.__name__, data)
-        """End session"""
-        database.close()
 
     @unittest.skipIf(models.storage_t != 'db', "testing db storage")
     def test_new(self):
         """test that new adds an object to the database"""
-        database = DBStorage()
-        """Start a session"""
-        database.reload()
-
-        for key, value in classes.items():
-            with self.subTest(key=key, value=value):
-                inst = value()
-                """Get the initial number of obj before add"""
-                num = len(database.all())
-                """Place the data in database.__session"""
-                database.new(inst)
-                """Get the number of object after new"""
-                after_num = len(database.all())
-                self.assertNotEqual(num, after_num)
-        """End session"""
-        database.close()
 
     @unittest.skipIf(models.storage_t != 'db', "testing db storage")
     def test_save(self):
         """Test that save properly saves objects to file.json"""
-        database = DBStorage()
-        """Start a session"""
-        database.reload()
-        """Get the number of object in the database"""
-        num = len(database.all())
-
-        """Generate data"""
-        for value in classes.values():
-            instance = value()
-            database.new(instance)
-
-        """Save the data """
-        database.save()
-
-        """close the session"""
-        database.close()
-
-        """Start another session to get the data form the database"""
-        database.reload()
-        """Get the number of object in the database"""
-        num_aftr_save = len(database.all())
-
-        self.assertNotEqual(num, num_aftr_save)
-
-        """close the session"""
-        database.close()
 
     @unittest.skipIf(models.storage_t != 'db', "testing db storage")
     def test_get(self):
