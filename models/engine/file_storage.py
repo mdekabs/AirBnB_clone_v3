@@ -50,9 +50,9 @@ class FileStorage:
 
     def get(self, cls, id):
         """A method to retrieve one object"""
-        if cls and id and cls in classes.values():
+        if cls and id:
             data =  self.all(cls)
-            search = "{}.{}".format(cls, id)
+            search = "{}.{}".format(cls.__name__, id)
             if search in data.keys():
                 return data[search]
 
