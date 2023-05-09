@@ -180,6 +180,8 @@ class TestFileStorage(unittest.TestCase):
         self.assertEqual(id, get_obj.id)
         self.assertIsInstance(get_obj, State)
         self.assetEqual(type(id), str)
+        """End the session"""
+        database.close()
 
     @unittest.skipIf(models.storage_t != 'db', "testing db storage")
     def test_count(self):
