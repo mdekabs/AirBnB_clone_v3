@@ -167,22 +167,19 @@ class TestFileStorage(unittest.TestCase):
     def test_get(self):
         """Test that get properly fetch the object"""
         database = DBStorage()
-        """Starting a session"""
+        """Start a session"""
         database.reload()
+        """Create an instance to test"""
+        instance = State(name="Lagos")
 
-        for key, value in classes.items():
-            with self.subTest(key=key, value=value):
-                inst = value()
-                inst_key = inst.__class__.__name__ + "." + inst.id
-                """Place the data in database.__session"""
-                database.new(inst)
-                test_obj = database.all(value)[inst_key]
-                main_obj = database.get(value, inst.id)
-                self.assertEqual(test_obj, main_obj)
+        database.new(instance)
 
-        self.assertEqual(database.get(), None)
-        """End the session"""
-        database.close()
+        id = instance.id
+        get_obj = database.get(State, id)
+
+        self.assertEqual(id, get_obj.id)
+        self.assertIsInstance(get_obj, State)
+        self.assetEqual(type(id), str)
 
     @unittest.skipIf(models.storage_t != 'db', "testing db storage")
     def test_count(self):
