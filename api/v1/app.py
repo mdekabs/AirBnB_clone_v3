@@ -16,6 +16,7 @@ def teardown(exception):
     """End the session"""
     storage.close()
 
+
 @app.errorhandler(404)
 def page_not_found(e):
     """Handles the 404 error page"""
