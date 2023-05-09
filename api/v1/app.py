@@ -21,7 +21,7 @@ def teardown(exception):
 def page_not_found(e):
     """Handles the 404 error page"""
 
-    return jsonify({"error": "Not found"})
+    return jsonify({"error": "Not found"}), 404
 
 
 if __name__ == "__main__":
