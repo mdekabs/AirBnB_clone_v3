@@ -24,11 +24,11 @@ def count():
     """Return the number of objects present in the database"""
 
     stats = {}
-    classes = {"amenities": Amenity, "cities": City,
-           "places": Place, "reviews": Review, "states": State, "users": User}
+    classes = {"amenities": Amenity, "cities": City, "places": Place,
+               "reviews": Review, "states": State, "users": User}
 
     for key, value in classes.items():
         count_obj = models.storage.count(value)
         stats[key] = count_obj
-    
+
     return jsonify(stats)
