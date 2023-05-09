@@ -170,7 +170,7 @@ class TestFileStorage(unittest.TestCase):
         """Start a session"""
         database.reload()
         """Create an instance to test"""
-        instance = State(name="Lagos")
+        instance = State("Lagos")
 
         database.new(instance)
 

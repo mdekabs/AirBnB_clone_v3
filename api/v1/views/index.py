@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""Create root using registered blueprint"""
+"""Create view using registered blueprint"""
 
 from api.v1.views import app_views
 from flask import jsonify
