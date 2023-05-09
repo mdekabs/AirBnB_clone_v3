@@ -167,6 +167,7 @@ class TestFileStorage(unittest.TestCase):
     def test_get(self):
         """Test that get properly fetch the object"""
         database = DBStorage()
+        """Starting a session"""
         database.reload()
 
         for key, value in classes.items():
@@ -175,7 +176,7 @@ class TestFileStorage(unittest.TestCase):
                 inst_key = inst.__class__.__name__ + "." + inst.id
                 """Place the data in database.__session"""
                 database.new(inst)
-                test_obj = database.all()[inst_key]
+                test_obj = database.all(value)[inst_key]
                 main_obj = database.get(value, inst.id)
                 self.assertEqual(test_obj, main_obj)
 
