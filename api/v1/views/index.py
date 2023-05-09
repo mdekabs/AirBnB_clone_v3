@@ -18,6 +18,7 @@ def status():
 
     return jsonify({"status": "OK"})
 
+
 @app_views.route('/stats')
 def count():
     """Return the number of objects present in the database"""
