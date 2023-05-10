@@ -62,33 +62,28 @@ def state_cities(state_id):
 def city(city_id):
     """HTTP methods with all cities data"""
 
-    if not city_id:
-        abort(404)
+    city = storage.get(City, city_id)
 
-    else:
-        """Get a specific city with city_id"""
-        city = storage.get(City, city_id)
+    if city:
+        if request.method == 'GET':
+            return jsonify(city.to_dict())
 
-        if city:
-            if request.method == 'GET':
-                return jsonify(city.to_dict())
+        if request.method == 'DELETE':
+            storage.delete(city)
+            storage.save()
+            return jsonify({}), 200
 
-            if request.method == 'DELETE':
-                storage.delete(city)
-                storage.save()
-                return jsonify({}), 200
+        if request.method == 'PUT':
+            """Get the json data from the request body"""
+            data_json = request.get_json()
 
-            if request.method == 'PUT':
-                """Get the json data from the request body"""
-                data_json = request.get_json()
+            """Check if the data is not json"""
+            if not data_json:
+                abort(400, 'Not a JSON')
 
-                """Check if the data is not json"""
-                if not data_json:
-                    abort(400, 'Not a JSON')
+            """Update the obj with the new value"""
+            city.name = data_json.get('name')
+            city.save()
+            return jsonify(city.to_dict()), 200
 
-                """Update the obj with the new value"""
-                city.name = data_json.get('name')
-                city.save()
-                return jsonify(city.to_dict()), 200
-
-        abort(404)
+    abort(404)
