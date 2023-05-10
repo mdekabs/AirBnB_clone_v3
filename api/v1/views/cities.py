@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-"""All REASTFUL API for STATES"""
+"""Script that handles all RESTFUL API Functions for City Object"""
 
 from api.v1.views import app_views
 from flask import request, jsonify, abort

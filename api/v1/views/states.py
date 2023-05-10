@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-"""Objects that handles all RESTFUL API Functions"""
+"""Script that handles all RESTFUL API Functions for State Object"""
 
 from api.v1.views import app_views
 from flask import request, jsonify, abort
@@ -16,8 +16,8 @@ def states(state_id=None):
     """Retrieves a list of state obj"""
 
     state_objs = storage.all(State)
-    """'{{Amenity.__class__.__name__}.{Amenity.id}': row_obj} is
-    returned for each amenity value"""
+    """'{{State.__class__.__name__}.{State.id}': row_obj} is
+    returned for each state value"""
 
     states = [obj.to_dict() for obj in state_objs.values()]
     if not state_id:
