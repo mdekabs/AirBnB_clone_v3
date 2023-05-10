@@ -62,6 +62,8 @@ def state_cities(state_id):
 def city(city_id):
     """HTTP methods with all cities data"""
 
+    if not city_id:
+        abort(404)
     """Get a specific city with city_id"""
     city = storage.get(City, city_id)
 
