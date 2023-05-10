@@ -21,7 +21,7 @@ def state_cities(state_id):
 
     """Get the state with state_id given"""
     state = [True for obj in storage.all(State).values()
-              if obj.id == state_id]
+             if obj.id == state_id]
     """Get all the cities with specific state_id"""
     cities = [obj.to_dict() for obj in cities_obj.values()
               if obj.state_id == state_id]
