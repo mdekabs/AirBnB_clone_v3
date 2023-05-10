@@ -24,7 +24,7 @@ def reviews__by_place(place_id):
             if place.id == place_id:
                 reviews_objs = storage.all(Review)
                 reviews = [obj.to_dict() for obj in
-                          reviews_objs.values() if obj.place_id == place_id]
+                           reviews_objs.values() if obj.place_id == place_id]
                 return jsonify(reviews)
         abort(404)
 
