@@ -90,3 +90,5 @@ def city(city_id):
                 city.name = data_json.get('name')
                 city.save()
                 return jsonify(city.to_dict()), 200
+
+        abort(404)
