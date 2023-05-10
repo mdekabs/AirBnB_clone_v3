@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
-"""Script to render the states data"""
+"""RESTful api that query through the database
+and return the data for State Object."""
 
 from api.v1.views import app_views
 from flask import jsonify, abort, request
@@ -41,19 +42,18 @@ def states(state_id=None):
 
     else:
         """Get a specific state with state_id"""
-        if request.method == 'GET':
-            search = "{}.{}".format(State.__name__, state_id)
-            if search in states_obj:
-                return jsonify(states_obj[search].to_dict())
+        state = storage.get(State, state_id)
+
+        if not state:
             abort(404)
 
+        if request.method == 'GET':
+            return jsonify(state.to_dict())
+
         if request.method == 'DELETE':
-            search = "{}.{}".format(State.__name__, state_id)
-            if search in states_obj:
-                storage.delete(states_obj[search])
-                storage.save()
-                return jsonify({})
-            abort(404)
+            storage.delete(state)
+            storage.save()
+            return jsonify({}), 200
 
         if request.method == 'PUT':
             """Get the json data from the request body"""
@@ -63,10 +63,7 @@ def states(state_id=None):
             if not data_json:
                 abort(400, 'Not a JSON')
 
-            search = "{}.{}".format(State.__name__, state_id)
-            if search in states_obj:
-                """Update the obj with the new value"""
-                states_obj[search].name = data_json.get('name')
-                states_obj[search].save()
-                return jsonify(states_obj[search].to_dict())
-            abort(404)
+            """Update the obj with the new value"""
+            state.name = data_json.get('name')
+            state.save()
+            return jsonify(state.to_dict()), 200

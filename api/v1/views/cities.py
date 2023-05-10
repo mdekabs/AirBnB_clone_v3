@@ -6,8 +6,11 @@ from api.v1.views import app_views
 from flask import jsonify, abort, request
 from models import storage
 from models.city import City
+from models.state import State
 
-"""Get all the cities obj from the storage"""
+"""Get all the cities obj from the storage
+'{{State.__class__.__name__}.{Object.id}': row_obj} is
+    returned for each State value"""
 cities_obj = storage.all(City)
 
 
@@ -15,17 +18,19 @@ cities_obj = storage.all(City)
                  methods=['GET', 'POST'], strict_slashes=False)
 def state_cities(state_id):
     """HTTP methods with all the cities data"""
-    if not state_id:
-        abort(404)
 
+    """Get the state with state_id given"""
+    state =  [True for obj in storage.all(State).values()
+              if obj.id == state_id]
     """Get all the cities with specific state_id"""
-    cities = [value.to_dict() for value in cities_obj.values()
-              if value.state_id == state_id]
+    cities = [obj.to_dict() for obj in cities_obj.values()
+              if obj.state_id == state_id]
+
+    if not state:
+        abort(404)
 
     if request.method == 'GET':
-        if cities:
-            return jsonify(cities)
-        abort(404)
+        return jsonify(cities)
 
     if request.method == 'POST':
         """Create a new city data
@@ -56,24 +61,19 @@ def state_cities(state_id):
                  methods=['GET', 'DELETE', 'PUT'], strict_slashes=False)
 def city(city_id):
     """HTTP methods with all cities data"""
-    if not city_id:
-        abort(404)
 
+    """Get a specific city with city_id"""
+    city = storage.get(City, city_id)
+
+    if not city:
+        abort(city)
     if request.method == 'GET':
-        """Get a specific city with city_id"""
-        search = "{}.{}".format(City.__name__, city_id)
-        if search in cities_obj:
-            return jsonify(cities_obj[search].to_dict())
-        abort(404)
+        return jsonify(city.to_dict())
 
     if request.method == 'DELETE':
-        """Delete the city with the provided city_id"""
-        search = "{}.{}".format(City.__name__, city_id)
-        if search in cities_obj:
-            storage.delete(cities_obj[search])
-            storage.save()
-            return jsonify({}), 200
-        abort(404)
+        storage.delete(city)
+        storage.save()
+        return jsonify({}), 200
 
     if request.method == 'PUT':
         """Get the json data from the request body"""
@@ -83,10 +83,7 @@ def city(city_id):
         if not data_json:
             abort(400, 'Not a JSON')
 
-        search = "{}.{}".format(City.__name__, city_id)
-        if search in cities_obj:
-            """Update the obj with the new value"""
-            cities_obj[search].name = data_json.get('name')
-            cities_obj[search].save()
-            return jsonify(cities_obj[search].to_dict()), 200
-        abort(404)
+        """Update the obj with the new value"""
+        city.name = data_json.get('name')
+        city.save()
+        return jsonify(city.to_dict()), 200
