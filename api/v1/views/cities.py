@@ -14,6 +14,8 @@ from models import storage
 def cities__by_state(state_id):
     """retrieve cities based on state_id"""
     state_objs = storage.all(State)
+    """'{{State.__class__.__name__}.{State.id}': row_obj} is
+    returned for each state value"""
     states = [obj for obj in state_objs.values()]
 
     if request.method == 'GET':

@@ -16,6 +16,8 @@ def states(state_id=None):
     """Retrieves a list of state obj"""
 
     state_objs = storage.all(State)
+    """'{{Amenity.__class__.__name__}.{Amenity.id}': row_obj} is
+    returned for each amenity value"""
 
     states = [obj.to_dict() for obj in state_objs.values()]
     if not state_id:
