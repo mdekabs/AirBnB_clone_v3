@@ -68,7 +68,8 @@ def city(city_id):
     city = storage.get(City, city_id)
 
     if not city:
-        abort(city)
+        abort(404)
+
     if request.method == 'GET':
         return jsonify(city.to_dict())
 
