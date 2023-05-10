@@ -41,6 +41,15 @@ def users(user_id=None):
                 if user.get('id') == user_id:
                     return jsonify(user)
             abort(404)
+
+        if request.method == 'DELETE':
+            for obj in user_objs.values():
+                if obj.id == user_id:
+                    storage.delete(obj)
+                    storage.save()
+                    return jsonify({}), 200
+            abort(404)
+
         if request.method == 'PUT':
             my_dict = request.get_json()
 
@@ -52,12 +61,4 @@ def users(user_id=None):
                         setattr(user, k, v)
                     user.save()
                     return jsonify(user.to_dict()), 200
-            abort(404)
-
-        if request.method == 'DELETE':
-            for obj in user_objs.values():
-                if obj.id == user_id:
-                    storage.delete(obj)
-                    storage.save()
-                    return jsonify({}), 200
             abort(404)

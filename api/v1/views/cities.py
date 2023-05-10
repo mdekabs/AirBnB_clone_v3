@@ -48,16 +48,20 @@ def city_by_city_id(city_id):
     city = storage.get(City, city_id)
     if city is None:
         abort(404)
+
     if request.method == 'GET':
         return jsonify(city.to_dict())
+
     if request.method == 'DELETE':
         storage.delete(city)
         storage.save()
         return jsonify({}), 200
+
     if request.method == 'PUT':
         my_dict = request.get_json()
         if my_dict is None:
             abort(400, 'Not a JSON')
-        city.name = my_dict.get("name")
+        for k, v in my_dict.items():
+            setattr(city, k, v)
         city.save()
         return jsonify(city.to_dict()), 200

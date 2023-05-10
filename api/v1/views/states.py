@@ -46,7 +46,8 @@ def states(state_id=None):
                 abort(400, 'Not a JSON')
             for state in state_objs.values():
                 if state.id == state_id:
-                    state.name = my_dict.get("name")
+                    for k, v in my_dict.items():
+                        setattr(state, k, v)
                     state.save()
                     return jsonify(state.to_dict()), 200
             abort(404)

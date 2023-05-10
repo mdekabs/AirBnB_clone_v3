@@ -5,32 +5,32 @@
 from api.v1.views import app_views
 from flask import request, jsonify, abort
 from models import storage
-from models.city import City
+from models.review import Review
 from models.place import Place
 from models.user import User
 
 
-@app_views.route('/cities/<city_id>/places',
+@app_views.route('/places/<place_id>/reviews',
                  methods=['GET', 'POST'], strict_slashes=False)
-def places__by_city(city_id):
+def reviews__by_place(place_id):
     """retrieve places based on city_id"""
-    city_objs = storage.all(City)
-    """'{{City.__class__.__name__}.{City.id}': row_obj} is
-    returned for each city value"""
-    cities = [obj for obj in city_objs.values()]
+    place_objs = storage.all(Place)
+    """'{{Place.__class__.__name__}.{Place.id}': row_obj} is
+    returned for each place value"""
+    places = [obj for obj in place_objs.values()]
 
     if request.method == 'GET':
-        for city in cities:
-            if city.id == city_id:
-                places_objs = storage.all(Place)
-                places = [obj.to_dict() for obj in
-                          places_objs.values() if obj.city_id == city_id]
-                return jsonify(places)
+        for place in places:
+            if place.id == place_id:
+                reviews_objs = storage.all(Review)
+                reviews = [obj.to_dict() for obj in
+                          reviews_objs.values() if obj.place_id == place_id]
+                return jsonify(reviews)
         abort(404)
 
     if request.method == 'POST':
-        for city in cities:
-            if city.id == city_id:
+        for place in places:
+            if place.id == place_id:
                 my_dict = request.get_json()
                 if my_dict is None:
                     abort(400, 'Not a JSON')
@@ -45,30 +45,30 @@ def places__by_city(city_id):
                     if not user:
                         abort(404)
 
-                if my_dict.get("name") is None:
-                    abort(400, 'Missing name')
+                if my_dict.get("text") is None:
+                    abort(400, 'Missing text')
 
-                my_dict["city_id"] = city_id
+                my_dict["place_id"] = place_id
                 my_dict["user_id"] = user_id
-                place = Place(**my_dict)
-                place.save()
-                return jsonify(place.to_dict()), 201
+                review = Review(**my_dict)
+                review.save()
+                return jsonify(review.to_dict()), 201
         abort(404)
 
 
-@app_views.route('/places/<place_id>',
+@app_views.route('/reviews/<review_id>',
                  methods=['GET', 'PUT', 'DELETE'], strict_slashes=False)
-def place_by_place_id(place_id):
+def review_by_review_id(review_id):
     """retrieves place by place_id"""
-    place = storage.get(Place, place_id)
-    if not place:
+    review = storage.get(Review, review_id)
+    if not review:
         abort(404)
 
     if request.method == 'GET':
-        return jsonify(place.to_dict())
+        return jsonify(review.to_dict())
 
     if request.method == 'DELETE':
-        storage.delete(place)
+        storage.delete(review)
         storage.save()
         return jsonify({}), 200
 
@@ -77,6 +77,6 @@ def place_by_place_id(place_id):
         if my_dict is None:
             abort(400, 'Not a JSON')
         for k, v in my_dict.items():
-            setattr(place, k, v)
-        place.save()
-        return jsonify(place.to_dict()), 200
+            setattr(review, k, v)
+        review.save()
+        return jsonify(review.to_dict()), 200

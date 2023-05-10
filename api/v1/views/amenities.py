@@ -43,6 +43,14 @@ def amenities(amenity_id=None):
                     return jsonify(amenity)
             abort(404)
 
+        if request.method == 'DELETE':
+            for obj in amenity_objs.values():
+                if obj.id == amenity_id:
+                    storage.delete(obj)
+                    storage.save()
+                    return jsonify({}), 200
+            abort(404)
+
         if request.method == 'PUT':
             my_dict = request.get_json()
 
@@ -50,15 +58,8 @@ def amenities(amenity_id=None):
                 abort(400, 'Not a JSON')
             for amenity in amenity_objs.values():
                 if amenity.id == amenity_id:
-                    amenity.name = my_dict.get("name")
+                    for k, v in my_dict.items():
+                        setattr(amenity, k, v)
                     amenity.save()
                     return jsonify(amenity.to_dict()), 200
-            abort(404)
-
-        if request.method == 'DELETE':
-            for obj in amenity_objs.values():
-                if obj.id == amenity_id:
-                    storage.delete(obj)
-                    storage.save()
-                    return jsonify({}), 200
             abort(404)
