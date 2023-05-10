@@ -1,69 +1,58 @@
 #!/usr/bin/python3
 
-"""RESTful api that query through the database
-and return the data for State Object."""
+"""Objects that handles all RESTFUL API Functions"""
 
 from api.v1.views import app_views
-from flask import jsonify, abort, request
+from flask import request, jsonify, abort
 from models import storage
 from models.state import State
 
 
-@app_views.route('/states', methods=['GET', 'POST'], strict_slashes=False)
-@app_views.route('/states/<state_id>', methods=['GET', 'PUT', 'DELETE'],
-                 strict_slashes=False)
+@app_views.route('/states',
+                 methods=['GET', 'POST'], strict_slashes=False)
+@app_views.route('/states/<state_id>',
+                 methods=['GET', 'PUT', 'DELETE'], strict_slashes=False)
 def states(state_id=None):
-    """HTTP methods with all the states data"""
-    states_obj = storage.all(State)
-    """'{{State.__class__.__name__}.{Object.id}': row_obj} is
-    returned for each State value"""
+    """Retrieves a list of state obj"""
 
+    state_objs = storage.all(State)
+
+    states = [obj.to_dict() for obj in state_objs.values()]
     if not state_id:
-        """Get all the state object from the storage"""
         if request.method == 'GET':
-            states_list = [value.to_dict() for value in states_obj.values()]
-            return jsonify(states_list)
+            return jsonify(states)
+        elif request.method == 'POST':
+            my_dict = request.get_json()
 
-        if request.method == 'POST':
-            """Get the json data from the request body"""
-            data_json = request.get_json()
-
-            """Check if the data is not json"""
-            if not data_json:
+            if my_dict is None:
                 abort(400, 'Not a JSON')
-            """Check if data doesn't contain name"""
-            if data_json.get('name') is None:
+            if my_dict.get("name") is None:
                 abort(400, 'Missing name')
-
-            """Create and save the new object"""
-            new = State(**data_json)
-            new.save()
-            return jsonify(new.to_dict()), 201
-
+            new_state = State(**my_dict)
+            new_state.save()
+            return jsonify(new_state.to_dict()), 201
     else:
-        """Get a specific state with state_id"""
-        state = storage.get(State, state_id)
+        if request.method == 'GET':
+            for state in states:
+                if state.get('id') == state_id:
+                    return jsonify(state)
+            abort(404)
+        elif request.method == 'PUT':
+            my_dict = request.get_json()
 
-        if not state:
+            if my_dict is None:
+                abort(400, 'Not a JSON')
+            for state in state_objs.values():
+                if state.id == state_id:
+                    state.name = my_dict.get("name")
+                    state.save()
+                    return jsonify(state.to_dict()), 200
             abort(404)
 
-        if request.method == 'GET':
-            return jsonify(state.to_dict())
-
-        if request.method == 'DELETE':
-            storage.delete(state)
-            storage.save()
-            return jsonify({}), 200
-
-        if request.method == 'PUT':
-            """Get the json data from the request body"""
-            data_json = request.get_json()
-
-            """Check if the data is not json"""
-            if not data_json:
-                abort(400, 'Not a JSON')
-
-            """Update the obj with the new value"""
-            state.name = data_json.get('name')
-            state.save()
-            return jsonify(state.to_dict()), 200
+        elif request.method == 'DELETE':
+            for obj in state_objs.values():
+                if obj.id == state_id:
+                    storage.delete(obj)
+                    storage.save()
+                    return jsonify({}), 200
+            abort(404)
