@@ -1,10 +1,11 @@
 #!/usr/bin/python3
+
 """Script to render the cities data"""
 
 from api.v1.views import app_views
 from flask import jsonify, abort, request
-from models.city import City
 from models import storage
+from models.city import City
 
 """Get all the cities obj from the storage"""
 cities_obj = storage.all(City)
