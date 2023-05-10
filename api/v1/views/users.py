@@ -48,7 +48,8 @@ def users(user_id=None):
                 abort(400, 'Not a JSON')
             for user in user_objs.values():
                 if user.id == user_id:
-                    user.first_name = my_dict.get("first_name")
+                    for k, v in my_dict.items():
+                        setattr(user, k, v)
                     user.save()
                     return jsonify(user.to_dict()), 200
             abort(404)

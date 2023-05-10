@@ -41,7 +41,7 @@ def cities__by_state(state_id):
         abort(404)
 
 
-@app_views.route('/cities/<string:city_id>',
+@app_views.route('/cities/<city_id>',
                  methods=['GET', 'PUT', 'DELETE'], strict_slashes=False)
 def city_by_city_id(city_id):
     """retrieves cities by cities_id"""
