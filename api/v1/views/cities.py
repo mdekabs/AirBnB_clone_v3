@@ -72,7 +72,7 @@ def city(city_id):
         if search in cities_obj:
             storage.delete(cities_obj[search])
             storage.save()
-            return jsonify({})
+            return jsonify({}), 200
         abort(404)
 
     if request.method == 'PUT':
@@ -88,5 +88,5 @@ def city(city_id):
             """Update the obj with the new value"""
             cities_obj[search].name = data_json.get('name')
             cities_obj[search].save()
-            return jsonify(cities_obj[search].to_dict())
+            return jsonify(cities_obj[search].to_dict()), 200
         abort(404)
