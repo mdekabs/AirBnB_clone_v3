@@ -23,7 +23,7 @@ def states(state_id=None):
     if not state_id:
         if request.method == 'GET':
             return jsonify(states)
-        elif request.method == 'POST':
+        if request.method == 'POST':
             my_dict = request.get_json()
 
             if my_dict is None:
@@ -39,7 +39,7 @@ def states(state_id=None):
                 if state.get('id') == state_id:
                     return jsonify(state)
             abort(404)
-        elif request.method == 'PUT':
+        if request.method == 'PUT':
             my_dict = request.get_json()
 
             if my_dict is None:
@@ -51,7 +51,7 @@ def states(state_id=None):
                     return jsonify(state.to_dict()), 200
             abort(404)
 
-        elif request.method == 'DELETE':
+        if request.method == 'DELETE':
             for obj in state_objs.values():
                 if obj.id == state_id:
                     storage.delete(obj)

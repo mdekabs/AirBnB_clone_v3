@@ -15,7 +15,7 @@ from models.user import User
 def users(user_id=None):
     """Retrieves a list of user obj"""
 
-    user_objs = storage.all(user)
+    user_objs = storage.all(User)
     """'{{User.__class__.__name__}.{User.id}': row_obj} is
     returned for each user value"""
 
@@ -23,7 +23,7 @@ def users(user_id=None):
     if not user_id:
         if request.method == 'GET':
             return jsonify(users)
-        elif request.method == 'POST':
+        if request.method == 'POST':
             my_dict = request.get_json()
 
             if my_dict is None:
@@ -39,7 +39,7 @@ def users(user_id=None):
                 if user.get('id') == user_id:
                     return jsonify(user)
             abort(404)
-        elif request.method == 'PUT':
+        if request.method == 'PUT':
             my_dict = request.get_json()
 
             if my_dict is None:
@@ -51,7 +51,7 @@ def users(user_id=None):
                     return jsonify(user.to_dict()), 200
             abort(404)
 
-        elif request.method == 'DELETE':
+        if request.method == 'DELETE':
             for obj in user_objs.values():
                 if obj.id == user_id:
                     storage.delete(obj)

@@ -26,7 +26,7 @@ def cities__by_state(state_id):
                           cities_objs.values() if obj.state_id == state_id]
                 return jsonify(cities)
         abort(404)
-    elif request.method == 'POST':
+    if request.method == 'POST':
         for state in states:
             if state.id == state_id:
                 my_dict = request.get_json()
