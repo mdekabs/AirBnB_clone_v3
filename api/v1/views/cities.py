@@ -65,25 +65,25 @@ def city(city_id):
     city = storage.get(City, city_id)
 
     if city:
-        if request.method == 'GET':
-            return jsonify(city.to_dict())
+        abort(404)
 
-        if request.method == 'DELETE':
-            storage.delete(city)
-            storage.save()
-            return jsonify({}), 200
+    if request.method == 'GET':
+        return jsonify(city.to_dict())
 
-        if request.method == 'PUT':
-            """Get the json data from the request body"""
-            data_json = request.get_json()
+    if request.method == 'DELETE':
+        storage.delete(city)
+        storage.save()
+        return jsonify({}), 200
 
-            """Check if the data is not json"""
-            if not data_json:
-                abort(400, 'Not a JSON')
+    if request.method == 'PUT':
+        """Get the json data from the request body"""
+        data_json = request.get_json()
 
-            """Update the obj with the new value"""
-            city.name = data_json.get('name')
-            city.save()
-            return jsonify(city.to_dict()), 200
+        """Check if the data is not json"""
+        if not data_json:
+            abort(400, 'Not a JSON')
 
-    abort(404)
+        """Update the obj with the new value"""
+        city.name = data_json.get('name')
+        city.save()
+        return jsonify(city.to_dict()), 200
