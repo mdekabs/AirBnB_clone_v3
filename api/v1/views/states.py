@@ -12,12 +12,13 @@ from models.state import State
 @app_views.route('/states/<state_id>', methods=['GET', 'PUT', 'DELETE'],
                  strict_slashes=False)
 def states(state_id=None):
-    """Get all the states data"""
+    """HTTP methods with all the states data"""
     states_obj = storage.all(State)
     """'{{State.__class__.__name__}.{Object.id}': row_obj} is
     returned for each State value"""
 
     if not state_id:
+        """Get all the state object from the storage"""
         if request.method == 'GET':
             states_list = [value.to_dict() for value in states_obj.values()]
             return jsonify(states_list)
@@ -39,6 +40,7 @@ def states(state_id=None):
             return jsonify(new.to_dict()), 201
 
     else:
+        """Get a specific state with state_id"""
         if request.method == 'GET':
             search = "{}.{}".format(State.__name__, state_id)
             if search in states_obj:
@@ -50,7 +52,7 @@ def states(state_id=None):
             if search in states_obj:
                 storage.delete(states_obj[search])
                 storage.save()
-                return jsonify({}), 200
+                return jsonify({})
             abort(404)
 
         if request.method == 'PUT':
@@ -60,7 +62,7 @@ def states(state_id=None):
             """Check if the data is not json"""
             if not data_json:
                 abort(400, 'Not a JSON')
-            """Check if data doesn't contain name"""
+
             search = "{}.{}".format(State.__name__, state_id)
             if search in states_obj:
                 """Update the obj with the new value"""
