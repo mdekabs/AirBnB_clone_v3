@@ -1,7 +1,9 @@
 #!/usr/bin/python3
 
 """Script that handles all RESTFUL API Functions
-for PlaceAmenity Relationship"""
+for PlaceAmenity Relationship
+Warning: This code is an attempt to solve the advanced task
+therefore the code might not run, it requires update"""
 
 from api.v1.views import app_views
 from flask import request, jsonify, abort
@@ -9,7 +11,7 @@ from models import storage
 from models.amenity import Amenity
 from models.place import Place
 
-    
+
 @app_views.route('/places/<place_id>/amenities',
                  methods=['GET'], strict_slashes=False)
 @app_views.route('/places/<place_id>/amenities/<amenity_id>',
@@ -32,7 +34,7 @@ def reviews__by_place(place_id, amenity_id=None):
             abort(404)
 
     else:
-        """Get the place obj with the given place_id and 
+        """Get the place obj with the given place_id and
         the amenity obj with the given amenity_id"""
         place = filter(lambda x: x.id == place_id, places)
         place_found = list(place)[0]
