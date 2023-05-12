@@ -155,6 +155,7 @@ No known bugs at this time.
 
 ## Authors
 Ekabua Mawoda - [Github](https://github.com/mdekabs) / 
+Eyang, Daniel Eyoh - [Github](https://github.com/Tediyang) / 
 Jennifer Huang - [Github](https://github.com/jhuang10123) / [Twitter](https://twitter.com/earthtojhuang)
 
 Second part of Airbnb: Joann Vuong
