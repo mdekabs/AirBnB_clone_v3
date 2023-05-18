@@ -12,6 +12,9 @@ from models.user import User
 
 @app_views.route('/places/<place_id>/reviews',
                  methods=['GET', 'POST'], strict_slashes=False)
+# Note: Adding endpoint to the route (endpoint='anyname') will
+# prevent AssertionError during deployment using WSGI
+# (function mapping overwriting).
 def reviews__by_place(place_id):
     """retrieve places based on city_id"""
     place_objs = storage.all(Place)
