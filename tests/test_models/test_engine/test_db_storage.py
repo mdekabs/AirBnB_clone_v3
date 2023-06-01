@@ -107,7 +107,7 @@ class TestFileStorage(unittest.TestCase):
 
         self.assertEqual(id, get_obj.id)
         self.assertIsInstance(get_obj, State)
-        self.assetEqual(type(id), str)
+        self.assertEqual(type(id), str)
         """End the session"""
         database.close()
 
